@@ -19,3 +19,15 @@ Future<List> getTareitas() async {
   }
   return tasks;
 }
+
+Future<void> saveTask(String title, String description) async {
+  await db.collection('tasks').add({
+    'title': title,
+    'description': description,
+    'status': 0,
+  });
+}
+
+Future<void> deleteTask(String id) async {
+  await db.collection('tasks').doc(id).delete();
+}

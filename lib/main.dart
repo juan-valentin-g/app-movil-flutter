@@ -1,4 +1,5 @@
 import 'package:firebase_app/pages/home.dart';
+import 'package:firebase_app/pages/newTask.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class MainApp extends StatelessWidget {
         textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.white)),
       ),
       home: HomePage(),
-      routes: {},
+      routes: {'/counter': (context) => const Newtask()},
     );
   }
 }

@@ -16,11 +16,20 @@ class _HomePageState extends State<HomePage> {
     futureTareitas = getTareitas();
   }
 
+  void refreshTareitas() {
+    setState(() {
+      futureTareitas = getTareitas();
+    });
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () {},
+        onPressed: () async {
+          await Navigator.pushNamed(context, '/counter');
+          refreshTareitas();
+        },
       ),
       appBar: AppBar(title: Text('Lista de Tareas')),
       body: FutureBuilder(
@@ -36,9 +45,11 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, index) {
                 var task = resp.data![index];
                 return TaskTile(
+                  id: task['id'],
                   title: task['title'],
                   description: task['description'],
                   status: task['status'],
+                  onDelete: refreshTareitas,
                 );
               },
             );
@@ -52,14 +63,18 @@ class _HomePageState extends State<HomePage> {
 }
 
 class TaskTile extends StatelessWidget {
+  final String id;
   final String title;
   final String description;
   final int status;
+  final VoidCallback onDelete;
   const TaskTile({
     super.key,
+    required this.id,
     required this.title,
     required this.description,
     required this.status,
+    required this.onDelete,
   });
 
   @override
@@ -67,7 +82,28 @@ class TaskTile extends StatelessWidget {
     return ListTile(
       title: Text(title),
       subtitle: Text(description),
-      trailing: Icon(Icons.close, color: const Color.fromARGB(255, 255, 7, 7)),
+      trailing: FloatingActionButton(
+        child: Icon(Icons.delete, color: const Color.fromARGB(255, 255, 7, 7)),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Estas Seguro?'),
+                actions: [
+                  TextButton(
+                    child: Text('Eliminar'),
+                    onPressed: () {
+                      deleteTask(id);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
